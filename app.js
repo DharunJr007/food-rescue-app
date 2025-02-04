@@ -1,27 +1,91 @@
-import { db, auth, provider } from "./firebase-config.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+// Import Firebase modules
+import { auth, provider } from "./firebase-config.js";
+import { 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    signInWithPopup, 
+    signOut, 
+    onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// Login Function
-document.getElementById("login-btn").addEventListener("click", async () => {
-    try {
-        const result = await signInWithPopup(auth, provider);
-        alert(`Welcome ${result.user.displayName}!`);
-    } catch (error) {
-        console.error("Error logging in:", error);
+// Select buttons
+const signupBtn = document.getElementById("signup-btn");
+const loginBtn = document.getElementById("login-btn");
+const googleLoginBtn = document.getElementById("google-login-btn");
+const logoutBtn = document.getElementById("logout-btn");
+const userInfo = document.getElementById("user-info");
+
+// Monitor authentication state
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        userInfo.innerText = `Logged in as: ${user.email}`;
+        logoutBtn.style.display = "block";
+        signupBtn.style.display = "none";
+        loginBtn.style.display = "none";
+        googleLoginBtn.style.display = "none";
+    } else {
+        userInfo.innerText = "";
+        logoutBtn.style.display = "none";
+        signupBtn.style.display = "block";
+        loginBtn.style.display = "block";
+        googleLoginBtn.style.display = "block";
     }
 });
 
-// Fetch and Display Food Data from Firestore
-async function fetchFoodData() {
-    const querySnapshot = await getDocs(collection(db, "food_items"));
-    const foodList = document.getElementById("food-list");
+// Signup Function
+signupBtn.addEventListener("click", () => {
+    const email = prompt("Enter your email:");
+    const password = prompt("Enter your password (min 6 characters):");
 
-    querySnapshot.forEach((doc) => {
-        let listItem = document.createElement("li");
-        listItem.textContent = `${doc.data().name} - ${doc.data().location}`;
-        foodList.appendChild(listItem);
-    });
-}
+    if (email && password.length >= 6) {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                alert("Signup successful! You can now log in.");
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    } else {
+        alert("Invalid email or password.");
+    }
+});
 
-fetchFoodData();
+// Login Function
+loginBtn.addEventListener("click", () => {
+    const email = prompt("Enter your email:");
+    const password = prompt("Enter your password:");
+
+    if (email && password) {
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                alert("Login successful!");
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    } else {
+        alert("Please enter valid credentials.");
+    }
+});
+
+// Google Login Function
+googleLoginBtn.addEventListener("click", () => {
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            alert("Logged in with Google!");
+        })
+        .catch((error) => {
+            alert(error.message);
+        });
+});
+
+// Logout Function
+logoutBtn.addEventListener("click", () => {
+    signOut(auth)
+        .then(() => {
+            alert("Logged out!");
+        })
+        .catch((error) => {
+            alert(error.message);
+        });
+});
