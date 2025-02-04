@@ -1,20 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Food Rescue App</title>
-    <script type="module" src="app.js"></script>
-</head>
-<body>
-    <h1>Welcome to the Food Rescue App</h1>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      header {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+      }
+      nav {
+        display: flex;
+        justify-content: space-around;
+        background-color: #333;
+        padding: 10px;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .container {
+        padding: 20px;
+      }
+      .auth-form {
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .auth-form input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .auth-form button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .auth-form button:hover {
+        background-color: #45a049;
+      }
+      .food-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .food-card {
+        background-color: white;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: calc(33.333% - 20px);
+      }
+      .food-card h3 {
+        margin: 0 0 10px;
+      }
+      .food-card p {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <h1>Food Rescue App</h1>
+    </header>
 
-    <!-- Authentication Buttons -->
-    <button id="signup-btn">Sign Up</button>
-    <button id="login-btn">Login</button>
-    <button id="google-login-btn">Login with Google</button>
-    <button id="logout-btn" style="display: none;">Logout</button>
+    <!-- Navigation Bar -->
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#food-list">Food List</a>
+      <a href="#login" id="login-btn">Login</a>
+      <a href="#signup" id="signup-btn">Signup</a>
+    </nav>
 
-    <p id="user-info"></p> <!-- To display logged-in user info -->
-</body>
+    <!-- Main Content -->
+    <div class="container">
+      <!-- Authentication Form (Login/Signup) -->
+      <div id="auth-section" class="auth-form" style="display: none">
+        <h2 id="auth-title">Login</h2>
+        <input type="email" id="email" placeholder="Email" />
+        <input type="password" id="password" placeholder="Password" />
+        <button id="auth-action-btn">Login</button>
+      </div>
+
+      <!-- Food List -->
+      <div id="food-list">
+        <h2>Available Food</h2>
+        <div class="food-list">
+          <!-- Food cards will be dynamically added here -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // JavaScript for handling login/signup toggle
+      const loginBtn = document.getElementById("login-btn");
+      const signupBtn = document.getElementById("signup-btn");
+      const authSection = document.getElementById("auth-section");
+      const authTitle = document.getElementById("auth-title");
+      const authActionBtn = document.getElementById("auth-action-btn");
+
+      // Show login form
+      loginBtn.addEventListener("click", () => {
+        authSection.style.display = "block";
+        authTitle.textContent = "Login";
+        authActionBtn.textContent = "Login";
+      });
+
+      // Show signup form
+      signupBtn.addEventListener("click", () => {
+        authSection.style.display = "block";
+        authTitle.textContent = "Signup";
+        authActionBtn.textContent = "Signup";
+      });
+
+      // Handle login/signup action
+      authActionBtn.addEventListener("click", () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (authTitle.textContent === "Login") {
+          alert(`Logging in with email: ${email}`);
+          // Add Firebase login logic here
+        } else {
+          alert(`Signing up with email: ${email}`);
+          // Add Firebase signup logic here
+        }
+      });
+
+      // Sample food data (replace with Firebase data)
+      const foodData = [
+        {
+          name: "Vegetarian Meal",
+          description: "Freshly prepared vegetarian dishes.",
+          location: "New York, NY",
+        },
+        {
+          name: "Sandwiches",
+          description: "Assorted sandwiches from a local event.",
+          location: "Los Angeles, CA",
+        },
+        {
+          name: "Fruits and Vegetables",
+          description: "Fresh fruits and vegetables from a farmer's market.",
+          location: "Chicago, IL",
+        },
+      ];
+
+      // Render food cards
+      const foodList = document.querySelector(".food-list");
+      foodData.forEach((food) => {
+        const foodCard = document.createElement("div");
+        foodCard.className = "food-card";
+        foodCard.innerHTML = `
+          <h3>${food.name}</h3>
+          <p>${food.description}</p>
+          <p><strong>Location:</strong> ${food.location}</p>
+        `;
+        foodList.appendChild(foodCard);
+      });
+    </script>
+  </body>
 </html>
